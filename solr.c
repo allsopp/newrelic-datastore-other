@@ -21,6 +21,10 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     config = newrelic_create_app_config("foo", argv[1]);
+
+    /* pass through SQL unobfuscated */
+    config->transaction_tracer.datastore_reporting.record_sql = NEWRELIC_SQL_RAW;
+
     rs = newrelic_configure_log("c_sdk.log", NEWRELIC_LOG_DEBUG); assert(rs);
     rs = newrelic_init(NULL, 0); assert(rs);
     app = newrelic_create_app(config, 10000);
@@ -33,7 +37,7 @@ main(int argc, char **argv)
     puts("## started segment");
 
     dsp1.product = NEWRELIC_DATASTORE_MYSQL;
-    dsp1.query = "SELECT * FROM products;";
+    dsp1.query = "SELECT * FROM users WHERE password = 'secret';";
     dss1 = newrelic_start_datastore_segment(tx, &dsp1);
     printf("### started datastore segment (%s)\n", dsp1.product);
     puts("#### sleeping for two seconds");
