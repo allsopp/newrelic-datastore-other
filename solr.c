@@ -21,6 +21,7 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     config = newrelic_create_app_config("foo", argv[1]);
+    assert(config);
 
     /* pass through SQL unobfuscated */
     config->transaction_tracer.datastore_reporting.record_sql = NEWRELIC_SQL_RAW;
